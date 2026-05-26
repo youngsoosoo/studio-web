@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# studio-web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for the studio portfolio. Built with **Vite + React + TypeScript + Tailwind CSS**.
 
-Currently, two official plugins are available:
+## Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Node.js 20+ (developed against Node 24)
+- npm 10+
 
-## React Compiler
+## Getting started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # type-check + production bundle into dist/
+npm run preview  # serve the built bundle locally
+npm run lint     # ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Project layout
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+  app/          App shell, BrowserRouter, route table
+  pages/        Top-level route components (HomePage, …)
+  features/     Feature-scoped components and hooks (empty for PF-001)
+  shared/       Cross-cutting components and libs
+    components/
+    lib/
+  data/
+    mock/       Static mock fixtures used until the API is wired up
+  main.tsx      Vite entry point
+  index.css     Tailwind directives + minimal global resets
+```
+
+## Routing
+
+`src/app/routes.tsx` declares the route table. The home page is rendered for `/`
+and any unknown path. Real route splits come in later tickets.
+
+## Mock data
+
+Until [studio-api](https://github.com/youngsoosoo/studio-api) endpoints land,
+the home page renders fixtures from `src/data/mock/mockProjects.ts`. Swap to
+real API calls in a feature module under `src/features/projects/`.
+
+## Conventions
+
+- Branches: `feature/{TICKET_ID}-{short-description}` cut from `dev`.
+- Commits: Conventional Commits (`chore:`, `feat:`, `fix:`, `docs:`, `test:`).
+- See [studio-docs](https://github.com/youngsoosoo/studio-docs) for the
+  cross-repo workflow.
+
+## Known follow-ups from PF-001
+
+- The default Vite scaffold files (`src/App.tsx`, `src/App.css`, `src/assets/*`,
+  `public/icons.svg`) were left in place because the working environment blocked
+  their deletion. They are not referenced by any module and can be removed in a
+  follow-up cleanup ticket.

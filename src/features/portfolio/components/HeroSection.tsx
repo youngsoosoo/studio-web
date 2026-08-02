@@ -51,7 +51,7 @@ export function HeroSection({
 }
 
 /**
- * Square photo slot. The space is always reserved; when no usable image is
+ * Portrait photo slot. The space is always reserved; when no usable image is
  * present (missing URL or a failed load) it falls back to the name's initial
  * so the layout stays intact even without a photo.
  */
@@ -61,12 +61,12 @@ function Avatar({ name, src }: { name: string; src: string | null }) {
   const initial = name.trim().charAt(0) || '?';
 
   return (
-    <div className="h-32 w-32 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 sm:h-40 sm:w-40">
+    <div className="h-40 w-32 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 sm:h-48 sm:w-40">
       {showImage ? (
         <img
           src={src as string}
           alt={`${name} 프로필 사진`}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-top"
           onError={() => setFailed(true)}
         />
       ) : (

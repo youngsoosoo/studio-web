@@ -102,7 +102,7 @@ function PortfolioError({ message }: { message: string }) {
       <h1 className="text-lg font-semibold text-red-900">콘텐츠를 불러오지 못했습니다</h1>
       <p className="mt-2 text-sm text-red-700">{message}</p>
       <p className="mt-1 text-xs text-red-500">
-        studio-api 서버가 실행 중인지 확인해 주세요 (mock 프로파일).
+        studio-api 서버와 데이터베이스가 실행 중인지 확인해 주세요.
       </p>
     </div>
   );

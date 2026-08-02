@@ -20,11 +20,12 @@ npm run preview  # 빌드 결과물을 로컬에서 서빙
 npm run lint     # ESLint 실행
 ```
 
-화면에 데이터가 보이려면 백엔드를 함께 실행해야 한다(DB 없이 동작하는 mock 프로파일):
+화면에 데이터가 보이려면 백엔드와 DB 를 함께 실행해야 한다:
 
 ```bash
 # studio-api 디렉터리에서
-./gradlew bootRun --args='--spring.profiles.active=mock'
+docker compose up -d
+./gradlew bootRun
 ```
 
 ## 환경 변수

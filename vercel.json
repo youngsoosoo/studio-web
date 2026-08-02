@@ -5,6 +5,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/backend/:path*",
+      "destination": "http://54.80.227.119/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

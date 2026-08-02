@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useActiveSection } from '../sections/useActiveSection';
 
 export interface NavItem {
@@ -7,13 +8,15 @@ export interface NavItem {
 
 interface OnThisPageNavProps {
   items: NavItem[];
+  /** Optional block rendered inside the sticky column, below the list. */
+  footer?: ReactNode;
 }
 
 /**
  * Sticky "on this page" table of contents. Hidden below lg; highlights the
  * section currently in view and smooth-scrolls to a section on click.
  */
-export function OnThisPageNav({ items }: OnThisPageNavProps) {
+export function OnThisPageNav({ items, footer }: OnThisPageNavProps) {
   const activeId = useActiveSection(items.map((item) => item.id));
 
   if (items.length === 0) {
@@ -48,6 +51,7 @@ export function OnThisPageNav({ items }: OnThisPageNavProps) {
           );
         })}
       </ul>
+      {footer ? <div className="mt-6">{footer}</div> : null}
     </nav>
   );
 }

@@ -27,8 +27,13 @@ export function TimelineSection({ timeline }: TimelineSectionProps) {
           />
           <div className="flex flex-wrap items-baseline gap-x-3">
             <p className="text-sm font-semibold text-slate-900">{entry.title}</p>
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-500">
-              {TYPE_LABEL[entry.type]}
+            <span
+              data-pdf-pill
+              className="inline-flex min-h-5 items-center justify-center rounded-full bg-slate-100 px-2 py-0.5 text-center text-[10px] font-medium uppercase leading-none tracking-wide text-slate-500"
+            >
+              <span data-pdf-pill-text className="relative -top-px">
+                {TYPE_LABEL[entry.type]}
+              </span>
             </span>
             <p className="text-xs text-slate-400">{entry.date}</p>
           </div>

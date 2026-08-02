@@ -7,6 +7,8 @@ interface CopyButtonProps {
   children: ReactNode;
   className?: string;
   ariaLabel?: string;
+  dataPdfPill?: boolean;
+  dataPdfCopyText?: string;
   /** Message shown in the floating tooltip after a successful copy. */
   copiedLabel?: string;
 }
@@ -19,6 +21,8 @@ interface CopyButtonProps {
 export function CopyButton({
   value,
   children,
+  dataPdfPill,
+  dataPdfCopyText,
   className,
   ariaLabel,
   copiedLabel = '복사됨!',
@@ -30,6 +34,8 @@ export function CopyButton({
       type="button"
       onClick={() => copy(value)}
       aria-label={ariaLabel}
+      data-pdf-pill={dataPdfPill ? '' : undefined}
+      data-pdf-copy-text={dataPdfCopyText}
       className={`relative ${className ?? ''}`}
     >
       {children}

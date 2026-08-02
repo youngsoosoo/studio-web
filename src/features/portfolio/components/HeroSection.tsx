@@ -4,9 +4,15 @@ import { SocialLinks } from './SocialLinks';
 
 interface HeroSectionProps {
   profile: Profile;
+  resumeDownloading: boolean;
+  onDownloadResume: () => void;
 }
 
-export function HeroSection({ profile }: HeroSectionProps) {
+export function HeroSection({
+  profile,
+  resumeDownloading,
+  onDownloadResume,
+}: HeroSectionProps) {
   return (
     <header className="flex flex-col items-start gap-6 py-12 sm:flex-row sm:items-center sm:gap-8">
       <Avatar name={profile.name} src={profile.avatarUrl} />
@@ -22,14 +28,16 @@ export function HeroSection({ profile }: HeroSectionProps) {
 
         <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500">
           <span aria-label="location">📍 {profile.location}</span>
-          {profile.resumeUrl ? (
-            <a
-              href={profile.resumeUrl}
-              className="font-medium text-slate-900 underline-offset-4 hover:underline"
-            >
-              이력서 다운로드
-            </a>
-          ) : null}
+          <button
+            type="button"
+            data-pdf-hide
+            onClick={onDownloadResume}
+            disabled={resumeDownloading}
+            aria-busy={resumeDownloading}
+            className="font-medium text-slate-900 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:cursor-wait disabled:text-slate-400"
+          >
+            {resumeDownloading ? 'PDF 생성 중...' : '이력서 다운로드'}
+          </button>
         </div>
 
         {profile.socials.length > 0 ? (

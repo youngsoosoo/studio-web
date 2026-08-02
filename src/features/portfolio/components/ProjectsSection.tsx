@@ -30,9 +30,12 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
               {project.tags.map((tag) => (
                 <li
                   key={tag}
+                  data-pdf-pill
                   className="inline-flex min-h-5 items-center justify-center rounded-full bg-slate-100 px-2.5 py-1 text-center text-[11px] font-medium uppercase leading-none tracking-wide text-slate-600"
                 >
-                  {tag}
+                  <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
+                    {tag}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -43,9 +46,12 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
               </h3>
               {project.featured ? (
                 <span
+                  data-pdf-pill
                   className="mt-0.5 inline-flex min-h-5 shrink-0 items-center justify-center rounded-full bg-slate-900 px-2 py-0.5 text-center text-[10px] font-semibold uppercase leading-none tracking-wide text-white"
                 >
-                  Featured
+                  <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
+                    Featured
+                  </span>
                 </span>
               ) : null}
             </div>

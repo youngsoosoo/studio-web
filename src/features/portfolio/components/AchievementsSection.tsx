@@ -15,8 +15,17 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-base font-semibold text-slate-900">{achievement.title}</h3>
             {achievement.metric ? (
-              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                {achievement.metric}
+              <span
+                data-pdf-pill
+                className="inline-flex min-h-6 items-center justify-center rounded-full bg-emerald-50 px-3 py-1 text-center text-xs font-semibold leading-none text-emerald-700"
+              >
+                <span
+                  data-pdf-pill-text
+                  data-pdf-pill-latin={/^[A-Za-z]/.test(achievement.metric) ? '' : undefined}
+                  className="relative -top-px"
+                >
+                  {achievement.metric}
+                </span>
               </span>
             ) : null}
           </div>

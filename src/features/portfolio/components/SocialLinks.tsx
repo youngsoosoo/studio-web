@@ -4,13 +4,13 @@ import { CopyButton } from './CopyButton';
 type Variant = 'chip' | 'icon' | 'text';
 
 const LIST_CLASS: Record<Variant, string> = {
-  chip: 'flex flex-wrap gap-2',
+  chip: 'flex flex-wrap items-center gap-2',
   icon: 'flex gap-2',
   text: 'space-y-2.5',
 };
 
 const ITEM_CLASS: Record<Variant, string> = {
-  chip: 'inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50',
+  chip: 'inline-flex min-h-7 items-center justify-center rounded-full border border-slate-200 bg-white px-3 py-1 text-center text-sm font-medium leading-none text-slate-700 transition hover:border-slate-300 hover:bg-slate-50',
   icon: 'flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50',
   text: 'text-sm text-slate-500 transition hover:text-slate-900',
 };
@@ -40,7 +40,11 @@ export function SocialLinks({ socials, variant = 'chip' }: SocialLinksProps) {
   return (
     <ul className={LIST_CLASS[variant]}>
       {socials.map((social) => {
-        const content = variant === 'icon' ? social.label.charAt(0) : social.label;
+        const content = (
+          <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
+            {variant === 'icon' ? social.label.charAt(0) : social.label}
+          </span>
+        );
         return (
           <li key={social.label}>
             {isEmail(social) ? (
@@ -48,6 +52,8 @@ export function SocialLinks({ socials, variant = 'chip' }: SocialLinksProps) {
                 value={emailAddress(social)}
                 ariaLabel={`이메일 주소 복사: ${emailAddress(social)}`}
                 className={ITEM_CLASS[variant]}
+                dataPdfPill={variant === 'chip'}
+                dataPdfCopyText={variant === 'chip' ? emailAddress(social) : undefined}
               >
                 {content}
               </CopyButton>
@@ -57,6 +63,7 @@ export function SocialLinks({ socials, variant = 'chip' }: SocialLinksProps) {
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label={variant === 'icon' ? social.label : undefined}
+                data-pdf-pill={variant === 'chip' ? '' : undefined}
                 className={ITEM_CLASS[variant]}
               >
                 {content}

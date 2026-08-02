@@ -41,9 +41,12 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               {experience.stack.map((tech) => (
                 <li
                   key={tech}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
+                  data-pdf-pill
+                  className="inline-flex min-h-6 items-center justify-center rounded-full bg-slate-100 px-3 py-1 text-center text-xs font-medium leading-none text-slate-700"
                 >
-                  {tech}
+                  <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
+                    {tech}
+                  </span>
                 </li>
               ))}
             </ul>

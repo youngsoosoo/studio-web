@@ -35,7 +35,7 @@ export function Footer({ profile, navItems }: FooterProps) {
           </p>
           {profile.socials.length > 0 ? (
             <div className="mt-5">
-              <SocialLinks socials={profile.socials} variant="icon" />
+              <SocialLinks socials={profile.socials} variant="chip" />
             </div>
           ) : null}
         </div>

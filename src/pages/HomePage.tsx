@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { Footer, HeroSection, OnThisPageNav, Section } from '../features/portfolio/components';
 import type { NavItem } from '../features/portfolio/components/OnThisPageNav';
 import { SECTION_ORDER } from '../features/portfolio/sections/order';
@@ -22,6 +23,9 @@ export function HomePage() {
 }
 
 function Portfolio({ data }: { data: PortfolioResponse }) {
+  const [resumeDownloading, setResumeDownloading] = useState(false);
+  const resumeContentRef = useRef<HTMLDivElement>(null);
+
   // Only sections that exist in the data, in the configured order.
   const visibleKeys = SECTION_ORDER.filter((key) => SECTION_REGISTRY[key].available(data));
 
@@ -29,13 +33,38 @@ function Portfolio({ data }: { data: PortfolioResponse }) {
     .filter((key) => SECTION_REGISTRY[key].inNav !== false)
     .map((key) => ({ id: key, label: SECTION_REGISTRY[key].navLabel }));
 
+  const handleResumeDownload = async () => {
+    if (resumeDownloading) {
+      return;
+    }
+
+    setResumeDownloading(true);
+    try {
+      if (!resumeContentRef.current) {
+        throw new Error('Resume content is not mounted.');
+      }
+
+      const { downloadResumePdf } = await import('../features/portfolio/pdf/downloadResumePdf');
+      await downloadResumePdf(resumeContentRef.current, data.profile.name);
+    } catch (error) {
+      console.error('Failed to generate resume PDF', error);
+      window.alert('PDF를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setResumeDownloading(false);
+    }
+  };
+
   return (
     <div className="lg:flex lg:items-start lg:gap-12">
       {/* The footer sits at the end of this column so it doubles as the scroll
           track that keeps the sticky on-this-page nav pinned through the final
-          sections (timeline/contact). */}
-      <div className="min-w-0 flex-1">
-        <HeroSection profile={data.profile} />
+          sections (timeline). */}
+      <div ref={resumeContentRef} data-resume-capture-root className="min-w-0 flex-1">
+        <HeroSection
+          profile={data.profile}
+          resumeDownloading={resumeDownloading}
+          onDownloadResume={handleResumeDownload}
+        />
         {visibleKeys.map((key) => {
           const def = SECTION_REGISTRY[key];
           return (

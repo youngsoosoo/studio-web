@@ -1,0 +1,14 @@
+export { Section } from './Section';
+export { HeroSection } from './HeroSection';
+export { OnThisPageNav } from './OnThisPageNav';
+export { Footer } from './Footer';
+export { AboutSection } from './AboutSection';
+export { StrengthsSection } from './StrengthsSection';
+export { AchievementsSection } from './AchievementsSection';
+export { ExperienceSection } from './ExperienceSection';
+export { ProjectsSection } from './ProjectsSection';
+export { TechStackSection } from './TechStackSection';
+export { EducationSection } from './EducationSection';
+export { AwardsSection } from './AwardsSection';
+export { CertificationsSection } from './CertificationsSection';
+export { TimelineSection } from './TimelineSection';

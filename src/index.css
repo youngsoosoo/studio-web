@@ -10,4 +10,8 @@ body,
 
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
+  /* Break Korean text at word (어절) boundaries instead of mid-word; only
+     break an over-long Latin token (e.g. a URL) when it would overflow. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }

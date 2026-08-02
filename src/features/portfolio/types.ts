@@ -14,7 +14,8 @@ export interface Profile {
   title: string;
   tagline: string;
   location: string;
-  avatarUrl: string;
+  /** Absolute URL served by the API, or null until a photo is uploaded. */
+  avatarUrl: string | null;
   resumeUrl: string;
   socials: SocialLink[];
 }
@@ -108,14 +109,6 @@ export interface TimelineEntry {
   type: TimelineType;
 }
 
-export interface Contact {
-  email: string;
-  phone: string | null;
-  location: string;
-  socials: SocialLink[];
-  availability: string;
-}
-
 export interface PortfolioResponse {
   profile: Profile;
   about: About;
@@ -128,5 +121,4 @@ export interface PortfolioResponse {
   awards: Award[];
   certifications: Certification[];
   timeline: TimelineEntry[];
-  contact: Contact;
 }

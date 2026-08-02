@@ -18,6 +18,4 @@ export const SECTION_ORDER: SectionKey[] = [
   'awards',
   'certifications',
   'timeline',
-  // 'contact' — 연락처 정보는 히어로/푸터의 소셜·이메일로 이미 노출되어 제외.
-  //            다시 보이려면 'contact'를 배열에 추가하면 됨.
 ];

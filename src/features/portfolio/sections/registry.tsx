@@ -4,7 +4,6 @@ import {
   AchievementsSection,
   AwardsSection,
   CertificationsSection,
-  ContactSection,
   EducationSection,
   ExperienceSection,
   ProjectsSection,
@@ -30,8 +29,7 @@ export type SectionKey =
   | 'education'
   | 'awards'
   | 'certifications'
-  | 'timeline'
-  | 'contact';
+  | 'timeline';
 
 export interface SectionDef {
   /** Label shown in the on-this-page nav. */
@@ -120,12 +118,5 @@ export const SECTION_REGISTRY: Record<SectionKey, SectionDef> = {
     eyebrow: 'Timeline',
     available: (d) => nonEmpty(d.timeline),
     render: (d) => <TimelineSection timeline={d.timeline} />,
-  },
-  contact: {
-    navLabel: '연락처',
-    title: '연락처',
-    eyebrow: 'Contact',
-    available: (d) => Boolean(d.contact),
-    render: (d) => <ContactSection contact={d.contact} />,
   },
 };

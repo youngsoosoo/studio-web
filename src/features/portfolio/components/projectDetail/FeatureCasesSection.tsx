@@ -11,13 +11,13 @@ import { normalizeCaseVisuals } from './visualUtils';
  */
 export function FeatureCasesSection({ cases }: { cases: ProjectProblemCase[] }) {
   return (
-    <ul className="grid items-start gap-4 md:grid-cols-2">
+    <ul className="grid items-stretch gap-4 md:grid-cols-2">
       {cases.map((featureCase) => {
         const visuals = normalizeCaseVisuals(featureCase.visuals, featureCase.images);
         return (
           <li
             key={featureCase.title}
-            className="rounded-xl border border-slate-200 bg-white p-5"
+            className="h-full rounded-xl border border-slate-200 bg-white p-5"
           >
             <h3 className="text-base font-semibold tracking-tight text-slate-900">
               {featureCase.title}

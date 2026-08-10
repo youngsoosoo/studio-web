@@ -85,8 +85,17 @@ export interface ProjectChallenge {
   description: string;
 }
 
+/**
+ * Which section a case-study block belongs to. `problem` blocks carry a
+ * diagnosed problem with measured results and get the full card; `feature`
+ * blocks are routine implementation work and get a deliberately lighter one.
+ */
+export type ProjectProblemCaseKind = 'problem' | 'feature';
+
 /** One problem-centred block containing its own solution narrative and results. */
 export interface ProjectProblemCase {
+  /** Optional while older API deployments omit it — absent means `problem`. */
+  kind?: ProjectProblemCaseKind;
   title: string;
   problemDefinition: string;
   approach: string[];

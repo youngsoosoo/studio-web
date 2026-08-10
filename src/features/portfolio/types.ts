@@ -73,6 +73,66 @@ export interface ProjectImage {
   caption?: string | null;
 }
 
+interface ProjectVisualBase {
+  id: number;
+  title?: string | null;
+  caption?: string | null;
+  schemaVersion: number;
+  sortOrder: number;
+}
+
+export interface ProjectImageVisual extends ProjectVisualBase {
+  type: 'image';
+  src: string;
+  alt: string;
+  payload: null;
+}
+
+export interface ProjectFlowStep {
+  label?: string;
+  title: string;
+  emphasis?: 'danger' | 'success';
+}
+
+export interface ProjectFlowGroup {
+  key: string;
+  label: string;
+  description?: string;
+  tone?: 'neutral' | 'danger' | 'success';
+  steps: ProjectFlowStep[];
+}
+
+export interface ProjectFlowVisual extends ProjectVisualBase {
+  type: 'flow';
+  src: null;
+  alt: null;
+  payload: {
+    layout: 'vertical';
+    groups: ProjectFlowGroup[];
+  };
+}
+
+export interface ProjectTableColumn {
+  key: string;
+  label: string;
+}
+
+export interface ProjectTableVisual extends ProjectVisualBase {
+  type: 'table';
+  src: null;
+  alt: null;
+  payload: {
+    columns: ProjectTableColumn[];
+    rows: Array<Record<string, string>>;
+  };
+}
+
+/** Safe declarative visuals; the API never sends executable markup or code. */
+export type ProjectCaseVisual =
+  | ProjectImageVisual
+  | ProjectFlowVisual
+  | ProjectTableVisual;
+
 /** One numbered card in the case study's "문제 정의" section. */
 export interface ProjectProblem {
   title: string;
@@ -85,14 +145,27 @@ export interface ProjectChallenge {
   description: string;
 }
 
+/**
+ * Which section a case-study block belongs to. `problem` blocks carry a
+ * diagnosed problem with measured results and get the full card; `feature`
+ * blocks are routine implementation work and get a deliberately lighter one.
+ */
+export type ProjectProblemCaseKind = 'problem' | 'feature';
+
 /** One problem-centred block containing its own solution narrative and results. */
 export interface ProjectProblemCase {
+  /** Optional while older API deployments omit it — absent means `problem`. */
+  kind?: ProjectProblemCaseKind;
   title: string;
   problemDefinition: string;
   approach: string[];
   challenges: ProjectChallenge[];
   outcomes: string[];
   metrics: ProjectMetric[];
+  /** Legacy case images returned by older API deployments. */
+  images?: ProjectImage[];
+  /** Ordered IMAGE/FLOW/TABLE items rendered directly from API data. */
+  visuals?: ProjectCaseVisual[];
 }
 
 /**

@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import type { ProjectProblemCase } from '../../types';
 import { Lead, StepNumber } from './primitives';
+import { VisualCarousel } from './VisualCarousel';
+import { normalizeCaseVisuals } from './visualUtils';
 
 /**
  * "문제 해결" — the heavyweight half of the case study. Every card here earns
@@ -40,6 +42,7 @@ function ProblemCaseCard({
     problemCase.challenges.length ||
     problemCase.outcomes.length ||
     problemCase.metrics.length;
+  const visuals = normalizeCaseVisuals(problemCase.visuals, problemCase.images);
 
   return (
     <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -77,6 +80,12 @@ function ProblemCaseCard({
                 </li>
               ))}
             </ol>
+          </ProblemStage>
+        ) : null}
+
+        {visuals.length ? (
+          <ProblemStage label="구조 변화" tone="architecture">
+            <VisualCarousel visuals={visuals} />
           </ProblemStage>
         ) : null}
 
@@ -137,12 +146,13 @@ function ProblemStage({
   children,
 }: {
   label: string;
-  tone: 'problem' | 'approach' | 'outcome';
+  tone: 'problem' | 'approach' | 'architecture' | 'outcome';
   children: ReactNode;
 }) {
   const labelClass = {
     problem: 'text-amber-700',
     approach: 'text-blue-700',
+    architecture: 'text-indigo-700',
     outcome: 'text-emerald-700',
   }[tone];
 

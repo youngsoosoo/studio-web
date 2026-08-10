@@ -15,3 +15,11 @@ body {
   word-break: keep-all;
   overflow-wrap: break-word;
 }
+
+.visual-carousel {
+  scrollbar-width: none;
+}
+
+.visual-carousel::-webkit-scrollbar {
+  display: none;
+}

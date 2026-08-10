@@ -65,7 +65,9 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
       problemCase.approach.length ||
       problemCase.challenges.length ||
       problemCase.outcomes.length ||
-      problemCase.metrics.length,
+      problemCase.metrics.length ||
+      problemCase.visuals?.length ||
+      problemCase.images?.length,
   );
   // Measured problem solving and routine feature work render as two sections of
   // very different weight, so one never inflates the other.
@@ -81,122 +83,122 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
     },
     ...(detail.contributions.length || detail.metrics.length
       ? [
-          {
-            id: 'role-metrics',
-            label: '역할 · 핵심 지표',
-            render: () => <RoleMetrics detail={detail} />,
-          },
-        ]
+        {
+          id: 'role-metrics',
+          label: '역할 · 핵심 지표',
+          render: () => <RoleMetrics detail={detail} />,
+        },
+      ]
       : []),
     ...(images.length
       ? [
-          {
-            id: 'architecture',
-            label: '아키텍처',
-            render: () => (
-              <div className="space-y-6">
-                {images.map((image) => (
-                  <ProjectFigure key={image.src} image={image} />
-                ))}
-              </div>
-            ),
-          },
-        ]
+        {
+          id: 'architecture',
+          label: '아키텍처',
+          render: () => (
+            <div className="space-y-6">
+              {images.map((image) => (
+                <ProjectFigure key={image.src} image={image} />
+              ))}
+            </div>
+          ),
+        },
+      ]
       : []),
     ...(hasNestedProblemCases
       ? [
-          ...(problemItems.length
-            ? [
-                {
-                  id: 'problem-solving',
-                  label: '문제 해결',
-                  render: () => (
-                    <ProblemCasesSection lead={detail.problem} cases={problemItems} />
-                  ),
-                },
-              ]
-            : []),
-          ...(featureItems.length
-            ? [
-                {
-                  id: 'features',
-                  label: '기능 구현',
-                  render: () => <FeatureCasesSection cases={featureItems} />,
-                },
-              ]
-            : []),
-        ]
+        ...(problemItems.length
+          ? [
+            {
+              id: 'problem-solving',
+              label: '문제 해결',
+              render: () => (
+                <ProblemCasesSection lead={detail.problem} cases={problemItems} />
+              ),
+            },
+          ]
+          : []),
+        ...(featureItems.length
+          ? [
+            {
+              id: 'features',
+              label: '기능 구현',
+              render: () => <FeatureCasesSection cases={featureItems} />,
+            },
+          ]
+          : []),
+      ]
       : [
-          ...(detail.problem || detail.problems.length
-            ? [
-                {
-                  id: 'problem',
-                  label: '문제 정의',
-                  render: () => (
-                    <div className="space-y-6">
-                      {detail.problem ? <Lead>{detail.problem}</Lead> : null}
-                      {detail.problems.length ? (
-                        <ol className="space-y-4">
-                          {detail.problems.map((problem, index) => (
-                            <li key={problem.title}>
-                              <NumberedCard
-                                index={index}
-                                title={problem.title}
-                                description={problem.description}
-                              />
-                            </li>
-                          ))}
-                        </ol>
-                      ) : null}
-                    </div>
-                  ),
-                },
-              ]
-            : []),
-          ...(detail.approach.length
-            ? [
-                {
-                  id: 'approach',
-                  label: '해결 과정',
-                  render: () => (
+        ...(detail.problem || detail.problems.length
+          ? [
+            {
+              id: 'problem',
+              label: '문제 정의',
+              render: () => (
+                <div className="space-y-6">
+                  {detail.problem ? <Lead>{detail.problem}</Lead> : null}
+                  {detail.problems.length ? (
                     <ol className="space-y-4">
-                      {detail.approach.map((step, index) => (
-                        <li key={step} className="flex gap-4">
-                          <StepNumber index={index} />
-                          <p className="pt-0.5 text-sm leading-relaxed text-slate-600">{step}</p>
+                      {detail.problems.map((problem, index) => (
+                        <li key={problem.title}>
+                          <NumberedCard
+                            index={index}
+                            title={problem.title}
+                            description={problem.description}
+                          />
                         </li>
                       ))}
                     </ol>
-                  ),
-                },
-              ]
-            : []),
-          ...(detail.challenges.length
-            ? [
-                {
-                  id: 'challenges',
-                  label: '기술적 도전 및 성과',
-                  render: () => (
-                    <div className="space-y-4">
-                      {detail.challenges.map((challenge) => (
-                        <article
-                          key={challenge.title}
-                          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-slate-300 hover:shadow-md"
-                        >
-                          <h3 className="text-base font-semibold tracking-tight text-slate-900">
-                            {challenge.title}
-                          </h3>
-                          <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                            {challenge.description}
-                          </p>
-                        </article>
-                      ))}
-                    </div>
-                  ),
-                },
-              ]
-            : []),
-        ]),
+                  ) : null}
+                </div>
+              ),
+            },
+          ]
+          : []),
+        ...(detail.approach.length
+          ? [
+            {
+              id: 'approach',
+              label: '해결 과정',
+              render: () => (
+                <ol className="space-y-4">
+                  {detail.approach.map((step, index) => (
+                    <li key={step} className="flex gap-4">
+                      <StepNumber index={index} />
+                      <p className="pt-0.5 text-sm leading-relaxed text-slate-600">{step}</p>
+                    </li>
+                  ))}
+                </ol>
+              ),
+            },
+          ]
+          : []),
+        ...(detail.challenges.length
+          ? [
+            {
+              id: 'challenges',
+              label: '기술적 도전 및 성과',
+              render: () => (
+                <div className="space-y-4">
+                  {detail.challenges.map((challenge) => (
+                    <article
+                      key={challenge.title}
+                      className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+                    >
+                      <h3 className="text-base font-semibold tracking-tight text-slate-900">
+                        {challenge.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                        {challenge.description}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              ),
+            },
+          ]
+          : []),
+      ]),
   ];
 
   const navItems: NavItem[] = sections.map(({ id, label }) => ({ id, label }));
@@ -206,7 +208,7 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
       {/* Hero */}
       <header className="mb-14 mt-6">
         <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-          Case Study · {project.role}
+          {project.role}
         </p>
         <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl">
           {project.title}

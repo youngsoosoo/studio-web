@@ -73,6 +73,66 @@ export interface ProjectImage {
   caption?: string | null;
 }
 
+interface ProjectVisualBase {
+  id: number;
+  title?: string | null;
+  caption?: string | null;
+  schemaVersion: number;
+  sortOrder: number;
+}
+
+export interface ProjectImageVisual extends ProjectVisualBase {
+  type: 'image';
+  src: string;
+  alt: string;
+  payload: null;
+}
+
+export interface ProjectFlowStep {
+  label?: string;
+  title: string;
+  emphasis?: 'danger' | 'success';
+}
+
+export interface ProjectFlowGroup {
+  key: string;
+  label: string;
+  description?: string;
+  tone?: 'neutral' | 'danger' | 'success';
+  steps: ProjectFlowStep[];
+}
+
+export interface ProjectFlowVisual extends ProjectVisualBase {
+  type: 'flow';
+  src: null;
+  alt: null;
+  payload: {
+    layout: 'vertical';
+    groups: ProjectFlowGroup[];
+  };
+}
+
+export interface ProjectTableColumn {
+  key: string;
+  label: string;
+}
+
+export interface ProjectTableVisual extends ProjectVisualBase {
+  type: 'table';
+  src: null;
+  alt: null;
+  payload: {
+    columns: ProjectTableColumn[];
+    rows: Array<Record<string, string>>;
+  };
+}
+
+/** Safe declarative visuals; the API never sends executable markup or code. */
+export type ProjectCaseVisual =
+  | ProjectImageVisual
+  | ProjectFlowVisual
+  | ProjectTableVisual;
+
 /** One numbered card in the case study's "문제 정의" section. */
 export interface ProjectProblem {
   title: string;
@@ -102,6 +162,10 @@ export interface ProjectProblemCase {
   challenges: ProjectChallenge[];
   outcomes: string[];
   metrics: ProjectMetric[];
+  /** Legacy case images returned by older API deployments. */
+  images?: ProjectImage[];
+  /** Ordered IMAGE/FLOW/TABLE items rendered directly from API data. */
+  visuals?: ProjectCaseVisual[];
 }
 
 /**

@@ -5,6 +5,7 @@ interface ProjectCoverProps {
   title: string;
   /** Tailwind aspect ratio class — cards use video, the page hero uses a wider crop. */
   aspect?: string;
+  fit?: 'cover' | 'contain';
   className?: string;
 }
 
@@ -18,6 +19,7 @@ export function ProjectCover({
   src,
   title,
   aspect = 'aspect-video',
+  fit = 'cover',
   className = '',
 }: ProjectCoverProps) {
   const [failed, setFailed] = useState(false);
@@ -31,7 +33,7 @@ export function ProjectCover({
           alt={`${title} 커버 이미지`}
           loading="lazy"
           onError={() => setFailed(true)}
-          className="h-full w-full object-cover"
+          className={`h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'}`}
         />
       ) : (
         <div

@@ -219,8 +219,9 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
         <ProjectCover
           src={project.thumbnailUrl}
           title={project.title}
-          aspect="aspect-[21/9]"
-          className="mt-10 rounded-2xl border border-slate-200"
+          aspect="aspect-[2/1]"
+          fit="contain"
+          className="mt-10 rounded-2xl border border-slate-200 bg-slate-900"
         />
       </header>
 

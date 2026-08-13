@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import type { ProjectSummary } from '../types';
-import { getProjectCoverSrc } from '../projectCover';
 import { ProjectCover } from './projectDetail/ProjectCover';
 
 interface ProjectsSectionProps {
@@ -21,7 +20,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           className="relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md focus-within:ring-2 focus-within:ring-slate-900/10"
         >
           <ProjectCover
-            src={getProjectCoverSrc(project)}
+            src={project.thumbnailUrl}
             title={project.title}
             aspect="aspect-[21/9]"
             className="border-b border-slate-100"

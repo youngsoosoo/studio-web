@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { ProjectSummary } from '../types';
+import { getProjectCoverSrc } from '../projectCover';
 import { ProjectCover } from './projectDetail/ProjectCover';
 
 interface ProjectsSectionProps {
@@ -13,34 +14,21 @@ interface ProjectsSectionProps {
  */
 export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
-    <ul className="grid gap-6 sm:grid-cols-2">
+    <ul className={`grid gap-6 ${projects.length > 1 ? 'sm:grid-cols-2' : ''}`}>
       {projects.map((project) => (
         <li
           key={project.id}
           className="relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md focus-within:ring-2 focus-within:ring-slate-900/10"
         >
           <ProjectCover
-            src={project.thumbnailUrl}
+            src={getProjectCoverSrc(project)}
             title={project.title}
+            aspect="aspect-[21/9]"
             className="border-b border-slate-100"
           />
 
           <div className="flex flex-1 flex-col p-6">
-            <ul className="flex flex-wrap gap-1.5">
-              {project.tags.map((tag) => (
-                <li
-                  key={tag}
-                  data-pdf-pill
-                  className="inline-flex min-h-5 items-center justify-center rounded-full bg-slate-100 px-2.5 py-1 text-center text-[11px] font-medium uppercase leading-none tracking-wide text-slate-600"
-                >
-                  <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
-                    {tag}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-4 flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-3">
               <h3 className="text-lg font-semibold tracking-tight text-slate-900">
                 {project.title}
               </h3>

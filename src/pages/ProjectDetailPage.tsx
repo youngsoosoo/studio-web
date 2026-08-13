@@ -9,7 +9,6 @@ import { ProblemCasesSection } from '../features/portfolio/components/projectDet
 import { ProjectCover } from '../features/portfolio/components/projectDetail/ProjectCover';
 import { ProjectFigure } from '../features/portfolio/components/projectDetail/ProjectFigure';
 import { Lead, StepNumber } from '../features/portfolio/components/projectDetail/primitives';
-import { getProjectCoverSrc } from '../features/portfolio/projectCover';
 import type { ProjectDetail, ProjectProblemCase } from '../features/portfolio/types';
 import { useProjectDetail } from '../features/portfolio/useProjectDetail';
 
@@ -218,7 +217,7 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">{project.summary}</p>
 
         <ProjectCover
-          src={getProjectCoverSrc(project)}
+          src={project.thumbnailUrl}
           title={project.title}
           aspect="aspect-[21/9]"
           className="mt-10 rounded-2xl border border-slate-200"

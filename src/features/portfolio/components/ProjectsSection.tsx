@@ -7,84 +7,67 @@ interface ProjectsSectionProps {
 }
 
 /**
- * Image-led project cards. The whole card links to the standalone case study at
- * `/projects/:id`; the external repo/live links sit above the stretched overlay
- * so they stay independently clickable.
+ * Editorial project cards with a consistent media area. Projects without an
+ * uploaded cover use the shared titled placeholder so every card keeps the
+ * same visual rhythm.
  */
 export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
     <ul className={`grid gap-6 ${projects.length > 1 ? 'sm:grid-cols-2' : ''}`}>
-      {projects.map((project) => (
-        <li
-          key={project.id}
-          className="relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md focus-within:ring-2 focus-within:ring-slate-900/10"
-        >
-          <ProjectCover
-            src={project.thumbnailUrl}
-            title={project.title}
-            aspect="aspect-[21/9]"
-            className="border-b border-slate-100"
-          />
+      {projects.map((project) => {
+        return (
+          <li
+            key={project.id}
+            className="project-card relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md focus-within:ring-2 focus-within:ring-slate-900/10"
+          >
+            <ProjectCover
+              src={project.thumbnailUrl}
+              title={project.title}
+              aspect="aspect-[2/1]"
+              fit="contain"
+              className="border-b border-slate-100 bg-slate-900"
+            />
 
-          <div className="flex flex-1 flex-col p-6">
-            <div className="flex items-start justify-between gap-3">
-              <h3 className="text-lg font-semibold tracking-tight text-slate-900">
-                {project.title}
-              </h3>
-              {project.featured ? (
-                <span
-                  data-pdf-pill
-                  className="mt-0.5 inline-flex min-h-5 shrink-0 items-center justify-center rounded-full bg-slate-900 px-2 py-0.5 text-center text-[10px] font-semibold uppercase leading-none tracking-wide text-white"
-                >
-                  <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
-                    Featured
+            <div className="project-card__body project-card__body--with-cover">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                  {project.role}
+                  {project.period ? ` · ${project.period}` : ''}
+                </p>
+                {project.featured ? (
+                  <span
+                    data-pdf-pill
+                    className="inline-flex min-h-5 shrink-0 items-center justify-center rounded-full bg-slate-900 px-2 py-0.5 text-center text-[10px] font-semibold uppercase leading-none tracking-wide text-white"
+                  >
+                    <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
+                      Featured
+                    </span>
                   </span>
-                </span>
-              ) : null}
-            </div>
-            {project.period ? (
-              <p className="mt-1 text-xs text-slate-400">
-                {project.role} · {project.period}
-              </p>
-            ) : null}
-
-            <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600">{project.summary}</p>
-
-            {project.repoUrl || project.liveUrl ? (
-              <div className="relative z-10 mt-5 flex gap-4 text-sm font-medium">
-                {project.repoUrl ? (
-                  <a
-                    href={project.repoUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-slate-500 underline-offset-4 transition hover:text-slate-900 hover:underline"
-                  >
-                    Code ↗
-                  </a>
-                ) : null}
-                {project.liveUrl ? (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-slate-500 underline-offset-4 transition hover:text-slate-900 hover:underline"
-                  >
-                    Live ↗
-                  </a>
                 ) : null}
               </div>
-            ) : null}
-          </div>
 
-          {/* Stretched overlay: makes the whole card navigate to the case study
-              while the elevated (z-10) external links stay clickable. */}
-          <Link
-            to={`/projects/${project.id}`}
-            aria-label={`${project.title} 케이스 스터디 보기`}
-            className="absolute inset-0 z-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
-          />
-        </li>
-      ))}
+              <h3 className="project-card__title text-lg font-semibold leading-snug tracking-tight text-slate-900">
+                {project.title}
+              </h3>
+
+              <div className="project-card__footer">
+                <Link
+                  to={`/projects/${project.id}`}
+                  className="border-b border-slate-700 pb-0.5 text-sm font-semibold text-slate-800 transition hover:border-slate-950 hover:text-slate-950"
+                >
+                  프로젝트 상세 보기 ↗
+                </Link>
+              </div>
+            </div>
+
+            <Link
+              to={`/projects/${project.id}`}
+              aria-label={`${project.title} 케이스 스터디 보기`}
+              className="absolute inset-0 z-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }

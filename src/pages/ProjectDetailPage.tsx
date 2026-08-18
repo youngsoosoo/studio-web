@@ -284,10 +284,13 @@ function Overview({ detail }: { detail: ProjectDetail }) {
         ? problemCase.challenges.map((challenge) => challenge.title)
         : problemCase.outcomes,
     );
-  const keyAchievements = nestedAchievements.length
-    ? nestedAchievements.slice(0, 3)
-    : detail.challenges.length
-      ? detail.challenges.slice(0, 3).map((challenge) => challenge.title)
+  // The headline list comes from the top-level project challenges API
+  // (`project_challenge`). Nested case achievements are only a fallback for
+  // older responses that do not include the top-level collection.
+  const keyAchievements = detail.challenges.length
+    ? detail.challenges.slice(0, 3).map((challenge) => challenge.title)
+    : nestedAchievements.length
+      ? nestedAchievements.slice(0, 3)
       : detail.outcomes.slice(0, 3);
 
   return (

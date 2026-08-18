@@ -120,7 +120,7 @@ function FeatureCaseCard({
                       <dt className="text-[10px] font-semibold uppercase tracking-wide text-blue-700">
                         {metric.label}
                       </dt>
-                      <dd className="mt-1 text-sm font-semibold text-blue-950">
+                      <dd className="mt-1 whitespace-pre-line text-sm font-semibold text-blue-950">
                         {metric.value}
                       </dd>
                     </div>

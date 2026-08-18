@@ -58,7 +58,7 @@ function Portfolio({ data }: { data: PortfolioResponse }) {
     <div className="lg:flex lg:items-start lg:gap-12">
       {/* The footer sits at the end of this column so it doubles as the scroll
           track that keeps the sticky on-this-page nav pinned through the final
-          sections (timeline). */}
+          sections. */}
       <div ref={resumeContentRef} data-resume-capture-root className="min-w-0 flex-1">
         <HeroSection
           profile={data.profile}

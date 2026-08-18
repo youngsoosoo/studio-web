@@ -9,7 +9,6 @@ import {
   ProjectsSection,
   StrengthsSection,
   TechStackSection,
-  TimelineSection,
 } from '../components';
 import type { PortfolioResponse } from '../types';
 
@@ -28,8 +27,7 @@ export type SectionKey =
   | 'expertise'
   | 'education'
   | 'awards'
-  | 'certifications'
-  | 'timeline';
+  | 'certifications';
 
 export interface SectionDef {
   /** Label shown in the on-this-page nav. */
@@ -111,12 +109,5 @@ export const SECTION_REGISTRY: Record<SectionKey, SectionDef> = {
     eyebrow: 'Certifications',
     available: (d) => nonEmpty(d.certifications),
     render: (d) => <CertificationsSection certifications={d.certifications} />,
-  },
-  timeline: {
-    navLabel: '타임라인',
-    title: '타임라인',
-    eyebrow: 'Timeline',
-    available: (d) => nonEmpty(d.timeline),
-    render: (d) => <TimelineSection timeline={d.timeline} />,
   },
 };

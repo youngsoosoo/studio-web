@@ -256,16 +256,6 @@ export interface Certification {
   credentialId: string | null;
 }
 
-export type TimelineType = 'work' | 'education' | 'milestone';
-
-export interface TimelineEntry {
-  id: string;
-  date: string;
-  title: string;
-  description: string;
-  type: TimelineType;
-}
-
 export interface PortfolioResponse {
   profile: Profile;
   about: About;
@@ -277,5 +267,4 @@ export interface PortfolioResponse {
   education: Education[];
   awards: Award[];
   certifications: Certification[];
-  timeline: TimelineEntry[];
 }

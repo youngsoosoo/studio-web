@@ -358,7 +358,7 @@ function RoleMetrics({ detail }: { detail: ProjectDetail }) {
               <dt className="text-[11px] uppercase tracking-wide text-slate-400">
                 {metric.label}
               </dt>
-              <dd className="mt-1 text-base font-semibold tracking-tight text-slate-900">
+              <dd className="mt-1 whitespace-pre-line text-base font-semibold tracking-tight text-slate-900">
                 {metric.value}
               </dd>
             </div>

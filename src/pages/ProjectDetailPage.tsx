@@ -329,6 +329,24 @@ function Overview({ detail }: { detail: ProjectDetail }) {
   );
 }
 
+const roleMetricTones = [
+  {
+    card: 'border-blue-100 border-l-blue-500 bg-blue-50/70',
+    label: 'text-blue-600',
+    value: 'text-blue-950',
+  },
+  {
+    card: 'border-emerald-100 border-l-emerald-500 bg-emerald-50/70',
+    label: 'text-emerald-600',
+    value: 'text-emerald-950',
+  },
+  {
+    card: 'border-amber-100 border-l-amber-500 bg-amber-50/70',
+    label: 'text-amber-600',
+    value: 'text-amber-950',
+  },
+] as const;
+
 function RoleMetrics({ detail }: { detail: ProjectDetail }) {
   return (
     <div className="grid gap-5 md:grid-cols-[1.2fr_1fr]">
@@ -353,19 +371,25 @@ function RoleMetrics({ detail }: { detail: ProjectDetail }) {
 
       {detail.metrics.length ? (
         <dl className="grid gap-3">
-          {detail.metrics.map((metric) => (
-            <div
-              key={metric.label}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-4"
-            >
-              <dt className="text-[11px] uppercase tracking-wide text-slate-400">
-                {metric.label}
-              </dt>
-              <dd className="mt-1 whitespace-pre-line text-base font-semibold tracking-tight text-slate-900">
-                {metric.value}
-              </dd>
-            </div>
-          ))}
+          {detail.metrics.map((metric, index) => {
+            const tone = roleMetricTones[index % roleMetricTones.length];
+
+            return (
+              <div
+                key={metric.label}
+                className={`rounded-xl border border-l-4 px-5 py-4 ${tone.card}`}
+              >
+                <dt className={`text-[11px] font-semibold uppercase tracking-wide ${tone.label}`}>
+                  {metric.label}
+                </dt>
+                <dd
+                  className={`mt-1 whitespace-pre-line text-base font-semibold tracking-tight ${tone.value}`}
+                >
+                  {metric.value}
+                </dd>
+              </div>
+            );
+          })}
         </dl>
       ) : null}
     </div>

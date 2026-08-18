@@ -35,22 +35,6 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               ))}
             </ul>
           ) : null}
-
-          {experience.stack.length > 0 ? (
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {experience.stack.map((tech) => (
-                <li
-                  key={tech}
-                  data-pdf-pill
-                  className="inline-flex min-h-6 items-center justify-center rounded-full bg-slate-100 px-3 py-1 text-center text-xs font-medium leading-none text-slate-700"
-                >
-                  <span data-pdf-pill-text data-pdf-pill-latin className="relative -top-px">
-                    {tech}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
         </li>
       ))}
     </ol>

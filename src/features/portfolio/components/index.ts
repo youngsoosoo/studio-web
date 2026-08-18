@@ -11,4 +11,3 @@ export { TechStackSection } from './TechStackSection';
 export { EducationSection } from './EducationSection';
 export { AwardsSection } from './AwardsSection';
 export { CertificationsSection } from './CertificationsSection';
-export { TimelineSection } from './TimelineSection';

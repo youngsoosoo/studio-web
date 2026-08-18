@@ -17,5 +17,4 @@ export const SECTION_ORDER: SectionKey[] = [
   'education',
   'awards',
   'certifications',
-  'timeline',
 ];

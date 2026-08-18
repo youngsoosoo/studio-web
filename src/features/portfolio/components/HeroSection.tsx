@@ -14,7 +14,10 @@ export function HeroSection({
   onDownloadResume,
 }: HeroSectionProps) {
   return (
-    <header className="flex flex-col items-start gap-6 py-12 sm:flex-row sm:items-center sm:gap-8">
+    <header
+      data-pdf-page-section
+      className="flex flex-col items-start gap-6 py-12 sm:flex-row sm:items-center sm:gap-8"
+    >
       <Avatar name={profile.name} src={profile.avatarUrl} />
 
       <div className="min-w-0">

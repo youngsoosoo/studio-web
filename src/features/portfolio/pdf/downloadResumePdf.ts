@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 const CAPTURE_WIDTH_PX = 900;
 const CAPTURE_SCALE = 1.5;
 const PDF_WIDTH_MM = 210;
+const PDF_HEIGHT_MM = 297;
 const PDF_MARGIN_MM = 12;
 const PDF_BOTTOM_PADDING_PX = 32;
 const CAPTURE_BACKGROUND = '#f8fafc';
@@ -16,6 +17,7 @@ export async function downloadResumePdf(
   const embeddedImageSources = await embedImageSources(sourceElement);
   const pdfLinks: PdfLinkRegion[] = [];
   const selectableTexts: PdfSelectableTextRegion[] = [];
+  const pageSections: PdfPageSectionRegion[] = [];
 
   const canvas = await html2canvas(sourceElement, {
     backgroundColor: CAPTURE_BACKGROUND,
@@ -29,7 +31,13 @@ export async function downloadResumePdf(
     scrollX: 0,
     scrollY: -window.scrollY,
     onclone: (clonedDocument) =>
-      prepareClone(clonedDocument, embeddedImageSources, pdfLinks, selectableTexts),
+      prepareClone(
+        clonedDocument,
+        embeddedImageSources,
+        pdfLinks,
+        selectableTexts,
+        pageSections,
+      ),
   });
 
   if (canvas.width === 0 || canvas.height === 0) {
@@ -37,13 +45,11 @@ export async function downloadResumePdf(
   }
 
   const contentWidthMm = PDF_WIDTH_MM - PDF_MARGIN_MM * 2;
-  const renderedHeightMm = (canvas.height / canvas.width) * contentWidthMm;
-  const pdfHeightMm = renderedHeightMm + PDF_MARGIN_MM * 2;
 
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
-    format: [PDF_WIDTH_MM, pdfHeightMm],
+    format: 'a4',
     compress: true,
     putOnlyUsedFonts: true,
   });
@@ -55,20 +61,7 @@ export async function downloadResumePdf(
     creator: 'studio portfolio',
   });
 
-  pdf.setFillColor(248, 250, 252);
-  pdf.rect(0, 0, PDF_WIDTH_MM, pdfHeightMm, 'F');
-  pdf.addImage(
-    canvas.toDataURL('image/jpeg', 0.96),
-    'JPEG',
-    PDF_MARGIN_MM,
-    PDF_MARGIN_MM,
-    contentWidthMm,
-    renderedHeightMm,
-    undefined,
-    'MEDIUM',
-  );
-  addPdfLinks(pdf, pdfLinks, canvas.width, contentWidthMm);
-  addSelectableTextLayer(pdf, selectableTexts, canvas.width, contentWidthMm);
+  addSectionPages(pdf, canvas, pageSections, pdfLinks, selectableTexts, contentWidthMm);
 
   pdf.save(`${sanitizeFileName(profileName)}-이력서.pdf`);
 }
@@ -88,20 +81,129 @@ interface PdfSelectableTextRegion {
   fontSizePx: number;
 }
 
+interface PdfPageSectionRegion {
+  top: number;
+  height: number;
+}
+
+function addSectionPages(
+  pdf: jsPDF,
+  canvas: HTMLCanvasElement,
+  sections: PdfPageSectionRegion[],
+  links: PdfLinkRegion[],
+  texts: PdfSelectableTextRegion[],
+  contentWidthMm: number,
+) {
+  const contentHeightMm = PDF_HEIGHT_MM - PDF_MARGIN_MM * 2;
+  const maxSliceHeightPx = Math.floor(
+    (contentHeightMm / contentWidthMm) * canvas.width,
+  );
+  const pageSlices = createPageSlices(canvas.height, sections, maxSliceHeightPx);
+
+  pageSlices.forEach((slice, pageIndex) => {
+    if (pageIndex > 0) {
+      pdf.addPage('a4', 'portrait');
+    }
+
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = slice.height;
+
+    const context = pageCanvas.getContext('2d');
+    if (!context) {
+      throw new Error('Could not create a PDF page canvas.');
+    }
+
+    context.fillStyle = CAPTURE_BACKGROUND;
+    context.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+    context.drawImage(
+      canvas,
+      0,
+      slice.top,
+      canvas.width,
+      slice.height,
+      0,
+      0,
+      canvas.width,
+      slice.height,
+    );
+
+    const renderedHeightMm = (slice.height / canvas.width) * contentWidthMm;
+    pdf.setFillColor(248, 250, 252);
+    pdf.rect(0, 0, PDF_WIDTH_MM, PDF_HEIGHT_MM, 'F');
+    pdf.addImage(
+      pageCanvas.toDataURL('image/jpeg', 0.96),
+      'JPEG',
+      PDF_MARGIN_MM,
+      PDF_MARGIN_MM,
+      contentWidthMm,
+      renderedHeightMm,
+      undefined,
+      'MEDIUM',
+    );
+    addPdfLinks(pdf, links, canvas.width, contentWidthMm, slice.top, slice.height);
+    addSelectableTextLayer(
+      pdf,
+      texts,
+      canvas.width,
+      contentWidthMm,
+      slice.top,
+      slice.height,
+    );
+  });
+}
+
+function createPageSlices(
+  canvasHeight: number,
+  sections: PdfPageSectionRegion[],
+  maxSliceHeight: number,
+): PdfPageSectionRegion[] {
+  const normalizedSections = sections.length
+    ? sections
+    : [{ top: 0, height: canvasHeight }];
+  const slices: PdfPageSectionRegion[] = [];
+
+  normalizedSections.forEach((section) => {
+    let top = Math.max(0, Math.min(section.top, canvasHeight));
+    let remainingHeight = Math.max(
+      0,
+      Math.min(section.height, canvasHeight - top),
+    );
+
+    while (remainingHeight > 0) {
+      const height = Math.min(remainingHeight, maxSliceHeight);
+      slices.push({ top, height });
+      top += height;
+      remainingHeight -= height;
+    }
+  });
+
+  return slices.length ? slices : [{ top: 0, height: canvasHeight }];
+}
+
 function addPdfLinks(
   pdf: jsPDF,
   links: PdfLinkRegion[],
   canvasWidth: number,
   contentWidthMm: number,
+  pageTop: number,
+  pageHeight: number,
 ) {
   const millimetersPerPixel = contentWidthMm / canvasWidth;
+  const pageBottom = pageTop + pageHeight;
 
   links.forEach((link) => {
+    const linkTop = Math.max(link.top, pageTop);
+    const linkBottom = Math.min(link.top + link.height, pageBottom);
+    if (linkBottom <= linkTop) {
+      return;
+    }
+
     pdf.link(
       PDF_MARGIN_MM + link.left * millimetersPerPixel,
-      PDF_MARGIN_MM + link.top * millimetersPerPixel,
+      PDF_MARGIN_MM + (linkTop - pageTop) * millimetersPerPixel,
       link.width * millimetersPerPixel,
-      link.height * millimetersPerPixel,
+      (linkBottom - linkTop) * millimetersPerPixel,
       { url: link.href },
     );
   });
@@ -112,16 +214,23 @@ function addSelectableTextLayer(
   texts: PdfSelectableTextRegion[],
   canvasWidth: number,
   contentWidthMm: number,
+  pageTop: number,
+  pageHeight: number,
 ) {
   const millimetersPerPixel = contentWidthMm / canvasWidth;
+  const pageBottom = pageTop + pageHeight;
 
   pdf.setFont('helvetica', 'normal');
   texts.forEach((text) => {
+    if (text.top < pageTop || text.top >= pageBottom) {
+      return;
+    }
+
     pdf.setFontSize((text.fontSizePx * 72) / 96);
     pdf.text(
       text.text,
       PDF_MARGIN_MM + text.left * millimetersPerPixel,
-      PDF_MARGIN_MM + text.top * millimetersPerPixel,
+      PDF_MARGIN_MM + (text.top - pageTop) * millimetersPerPixel,
       {
         baseline: 'top',
         renderingMode: 'invisible',
@@ -135,6 +244,7 @@ async function prepareClone(
   embeddedImageSources: string[],
   pdfLinks: PdfLinkRegion[],
   selectableTexts: PdfSelectableTextRegion[],
+  pageSections: PdfPageSectionRegion[],
 ) {
   inlineActiveStyles(clonedDocument);
 
@@ -200,6 +310,27 @@ async function prepareClone(
   await applyEmbeddedImages(captureRoot, embeddedImageSources);
   collectPdfLinks(captureRoot, pdfLinks);
   collectSelectableTexts(captureRoot, selectableTexts);
+  collectPdfPageSections(captureRoot, pageSections);
+}
+
+function collectPdfPageSections(
+  captureRoot: HTMLElement,
+  pageSections: PdfPageSectionRegion[],
+) {
+  const rootBounds = captureRoot.getBoundingClientRect();
+  captureRoot
+    .querySelectorAll<HTMLElement>(':scope > [data-pdf-page-section]')
+    .forEach((section) => {
+      const bounds = section.getBoundingClientRect();
+      if (bounds.height <= 0) {
+        return;
+      }
+
+      pageSections.push({
+        top: Math.round((bounds.top - rootBounds.top) * CAPTURE_SCALE),
+        height: Math.ceil(bounds.height * CAPTURE_SCALE),
+      });
+    });
 }
 
 function insertPdfCopyText(clonedDocument: Document) {

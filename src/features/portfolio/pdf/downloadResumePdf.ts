@@ -162,21 +162,47 @@ function createPageSlices(
     ? sections
     : [{ top: 0, height: canvasHeight }];
   const slices: PdfPageSectionRegion[] = [];
+  let pendingSlice: PdfPageSectionRegion | null = null;
 
   normalizedSections.forEach((section) => {
-    let top = Math.max(0, Math.min(section.top, canvasHeight));
+    const sectionTop = Math.max(0, Math.min(section.top, canvasHeight));
     let remainingHeight = Math.max(
       0,
-      Math.min(section.height, canvasHeight - top),
+      Math.min(section.height, canvasHeight - sectionTop),
     );
+    const sectionBottom = sectionTop + remainingHeight;
 
-    while (remainingHeight > 0) {
-      const height = Math.min(remainingHeight, maxSliceHeight);
+    if (remainingHeight === 0) {
+      return;
+    }
+
+    if (pendingSlice && sectionBottom - pendingSlice.top <= maxSliceHeight) {
+      pendingSlice.height = sectionBottom - pendingSlice.top;
+      return;
+    }
+
+    if (pendingSlice) {
+      slices.push(pendingSlice);
+      pendingSlice = null;
+    }
+
+    let top = sectionTop;
+
+    while (remainingHeight > maxSliceHeight) {
+      const height = maxSliceHeight;
       slices.push({ top, height });
       top += height;
       remainingHeight -= height;
     }
+
+    if (remainingHeight > 0) {
+      pendingSlice = { top, height: remainingHeight };
+    }
   });
+
+  if (pendingSlice) {
+    slices.push(pendingSlice);
+  }
 
   return slices.length ? slices : [{ top: 0, height: canvasHeight }];
 }

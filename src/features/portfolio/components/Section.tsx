@@ -20,6 +20,7 @@ export function Section({ id, title, eyebrow, children }: SectionProps) {
     <section
       id={id}
       aria-labelledby={headingId}
+      data-pdf-page-section
       className="scroll-mt-24 border-t border-slate-200 py-12 first:border-t-0 md:grid md:grid-cols-[10rem_1fr] md:gap-10"
     >
       <div className="md:self-start">

@@ -18,7 +18,7 @@ export function Footer({ profile, navItems }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-16 border-t border-slate-200 pt-12">
+    <footer data-pdf-page-section className="mt-16 border-t border-slate-200 pt-12">
       <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-3">

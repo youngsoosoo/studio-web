@@ -107,6 +107,15 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
       : []),
     ...(hasNestedProblemCases
       ? [
+        ...(featureItems.length
+          ? [
+            {
+              id: 'features',
+              label: '기능 구현',
+              render: () => <FeatureCasesSection cases={featureItems} />,
+            },
+          ]
+          : []),
         ...(problemItems.length
           ? [
             {
@@ -115,15 +124,6 @@ function CaseStudy({ detail }: { detail: ProjectDetail }) {
               render: () => (
                 <ProblemCasesSection lead={detail.problem} cases={problemItems} />
               ),
-            },
-          ]
-          : []),
-        ...(featureItems.length
-          ? [
-            {
-              id: 'features',
-              label: '기능 구현',
-              render: () => <FeatureCasesSection cases={featureItems} />,
             },
           ]
           : []),

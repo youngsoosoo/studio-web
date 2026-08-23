@@ -84,6 +84,11 @@ interface PdfSelectableTextRegion {
 interface PdfPageSectionRegion {
   top: number;
   height: number;
+  id?: string;
+}
+
+interface PdfPageSlice extends PdfPageSectionRegion {
+  fitToPage?: boolean;
 }
 
 function addSectionPages(
@@ -128,25 +133,40 @@ function addSectionPages(
       slice.height,
     );
 
-    const renderedHeightMm = (slice.height / canvas.width) * contentWidthMm;
+    const naturalHeightMm = (slice.height / canvas.width) * contentWidthMm;
+    const pageScale = slice.fitToPage
+      ? Math.min(1, contentHeightMm / naturalHeightMm)
+      : 1;
+    const renderedWidthMm = contentWidthMm * pageScale;
+    const renderedHeightMm = naturalHeightMm * pageScale;
+    const contentLeftMm = PDF_MARGIN_MM + (contentWidthMm - renderedWidthMm) / 2;
     pdf.setFillColor(248, 250, 252);
     pdf.rect(0, 0, PDF_WIDTH_MM, PDF_HEIGHT_MM, 'F');
     pdf.addImage(
       pageCanvas.toDataURL('image/jpeg', 0.96),
       'JPEG',
+      contentLeftMm,
       PDF_MARGIN_MM,
-      PDF_MARGIN_MM,
-      contentWidthMm,
+      renderedWidthMm,
       renderedHeightMm,
       undefined,
       'MEDIUM',
     );
-    addPdfLinks(pdf, links, canvas.width, contentWidthMm, slice.top, slice.height);
+    addPdfLinks(
+      pdf,
+      links,
+      canvas.width,
+      renderedWidthMm,
+      contentLeftMm,
+      slice.top,
+      slice.height,
+    );
     addSelectableTextLayer(
       pdf,
       texts,
       canvas.width,
-      contentWidthMm,
+      renderedWidthMm,
+      contentLeftMm,
       slice.top,
       slice.height,
     );
@@ -157,14 +177,65 @@ function createPageSlices(
   canvasHeight: number,
   sections: PdfPageSectionRegion[],
   maxSliceHeight: number,
-): PdfPageSectionRegion[] {
+): PdfPageSlice[] {
   const normalizedSections = sections.length
     ? sections
     : [{ top: 0, height: canvasHeight }];
-  const slices: PdfPageSectionRegion[] = [];
+  const slices: PdfPageSlice[] = [];
   let pendingSlice: PdfPageSectionRegion | null = null;
+  const achievementsIndex = normalizedSections.findIndex(
+    (section) => section.id === 'achievements',
+  );
+  let sectionsToPack = normalizedSections;
 
-  normalizedSections.forEach((section) => {
+  if (achievementsIndex >= 0) {
+    const firstSection = normalizedSections[0];
+    const achievementsSection = normalizedSections[achievementsIndex];
+    const firstPageTop = Math.max(0, Math.min(firstSection.top, canvasHeight));
+    const firstPageBottom = Math.max(
+      firstPageTop,
+      Math.min(achievementsSection.top + achievementsSection.height, canvasHeight),
+    );
+
+    slices.push({
+      top: firstPageTop,
+      height: firstPageBottom - firstPageTop,
+      fitToPage: true,
+    });
+    sectionsToPack = normalizedSections.slice(achievementsIndex + 1);
+  }
+
+  const experiencesIndex = sectionsToPack.findIndex(
+    (section) => section.id === 'experiences',
+  );
+  const projectsIndex = sectionsToPack.findIndex(
+    (section) => section.id === 'projects',
+  );
+
+  if (
+    experiencesIndex >= 0 &&
+    projectsIndex >= experiencesIndex
+  ) {
+    const experiencesSection = sectionsToPack[experiencesIndex];
+    const projectsSection = sectionsToPack[projectsIndex];
+    const secondPageTop = Math.max(
+      0,
+      Math.min(experiencesSection.top, canvasHeight),
+    );
+    const secondPageBottom = Math.max(
+      secondPageTop,
+      Math.min(projectsSection.top + projectsSection.height, canvasHeight),
+    );
+
+    slices.push({
+      top: secondPageTop,
+      height: secondPageBottom - secondPageTop,
+      fitToPage: true,
+    });
+    sectionsToPack = sectionsToPack.slice(projectsIndex + 1);
+  }
+
+  sectionsToPack.forEach((section) => {
     const sectionTop = Math.max(0, Math.min(section.top, canvasHeight));
     let remainingHeight = Math.max(
       0,
@@ -212,6 +283,7 @@ function addPdfLinks(
   links: PdfLinkRegion[],
   canvasWidth: number,
   contentWidthMm: number,
+  contentLeftMm: number,
   pageTop: number,
   pageHeight: number,
 ) {
@@ -226,7 +298,7 @@ function addPdfLinks(
     }
 
     pdf.link(
-      PDF_MARGIN_MM + link.left * millimetersPerPixel,
+      contentLeftMm + link.left * millimetersPerPixel,
       PDF_MARGIN_MM + (linkTop - pageTop) * millimetersPerPixel,
       link.width * millimetersPerPixel,
       (linkBottom - linkTop) * millimetersPerPixel,
@@ -240,6 +312,7 @@ function addSelectableTextLayer(
   texts: PdfSelectableTextRegion[],
   canvasWidth: number,
   contentWidthMm: number,
+  contentLeftMm: number,
   pageTop: number,
   pageHeight: number,
 ) {
@@ -255,7 +328,7 @@ function addSelectableTextLayer(
     pdf.setFontSize((text.fontSizePx * 72) / 96);
     pdf.text(
       text.text,
-      PDF_MARGIN_MM + text.left * millimetersPerPixel,
+      contentLeftMm + text.left * millimetersPerPixel,
       PDF_MARGIN_MM + (text.top - pageTop) * millimetersPerPixel,
       {
         baseline: 'top',
@@ -355,6 +428,7 @@ function collectPdfPageSections(
       pageSections.push({
         top: Math.round((bounds.top - rootBounds.top) * CAPTURE_SCALE),
         height: Math.ceil(bounds.height * CAPTURE_SCALE),
+        id: section.id || undefined,
       });
     });
 }

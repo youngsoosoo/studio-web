@@ -65,7 +65,7 @@ function ProblemCaseCard({
 
       <div className="divide-y divide-slate-100 px-6">
         <ProblemStage label="문제 정의" tone="problem">
-          <p className="text-sm leading-relaxed text-slate-600">
+          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
             {problemCase.problemDefinition}
           </p>
         </ProblemStage>

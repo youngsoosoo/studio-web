@@ -1,10 +1,34 @@
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { ProjectCaseVisual } from '../../types';
 import { CaseVisualRenderer } from './CaseVisualRenderer';
 
 export function VisualCarousel({ visuals }: { visuals: ProjectCaseVisual[] }) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const activeSlide = slideRefs.current[activeIndex];
+
+    if (!viewport || !activeSlide || visuals.length < 2) {
+      return;
+    }
+
+    const updateViewportHeight = () => {
+      const height = activeSlide.getBoundingClientRect().height;
+      if (height > 0) {
+        viewport.style.height = `${height}px`;
+      }
+    };
+
+    updateViewportHeight();
+
+    const resizeObserver = new ResizeObserver(updateViewportHeight);
+    resizeObserver.observe(activeSlide);
+
+    return () => resizeObserver.disconnect();
+  }, [activeIndex, visuals.length]);
 
   if (!visuals.length) {
     return null;
@@ -82,10 +106,16 @@ export function VisualCarousel({ visuals }: { visuals: ProjectCaseVisual[] }) {
         }}
         tabIndex={0}
         aria-label="좌우로 이동할 수 있는 시각 자료"
-        className="visual-carousel flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
+        className="visual-carousel flex items-start snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth transition-[height] duration-300 ease-out motion-reduce:transition-none"
       >
-        {visuals.map((visual) => (
-          <div key={visual.id} className="w-full shrink-0 snap-start px-px">
+        {visuals.map((visual, index) => (
+          <div
+            key={visual.id}
+            ref={(element) => {
+              slideRefs.current[index] = element;
+            }}
+            className="w-full shrink-0 snap-start px-px"
+          >
             <CaseVisualRenderer visual={visual} />
           </div>
         ))}
